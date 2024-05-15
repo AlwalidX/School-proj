@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7d4990f7a82b8349a23a9e200ba93f7, type: 3}
+  m_Name: SimpleRarityModifier
+  m_EditorClassIdentifier: 
+  m_Rarities:
+  - {fileID: 8483449784889714070, guid: ed82147b7f4ecc744b5e5387354e6197, type: 2}
+  - {fileID: -720801130855164449, guid: ed82147b7f4ecc744b5e5387354e6197, type: 2}
+  - {fileID: 106905715446910045, guid: ed82147b7f4ecc744b5e5387354e6197, type: 2}
+  - {fileID: 5245174503541873848, guid: ed82147b7f4ecc744b5e5387354e6197, type: 2}
