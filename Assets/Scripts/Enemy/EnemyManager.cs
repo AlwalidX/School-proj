@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using DevionGames.StatSystem;
 
 public class EnemyManager : MonoBehaviour
 {
@@ -9,12 +10,19 @@ public class EnemyManager : MonoBehaviour
      public NavMeshAgent AiAgent;
 
       GameObject Player;
+        public StatsHandler m_Handler;
+   public float Damage = 15f;
+    public float RateOfAttack = 0.4f;
 
+
+ public float attackRate = 2.0f; // Time between attacks in seconds
+    private float lastAttackTime = 0.0f;
       
 
     public Transform[] points;
      Transform nextTarget;
      int currentPointIndex;
+     float disToFollow = 7f;
 
     enum States
     {
@@ -38,7 +46,7 @@ public class EnemyManager : MonoBehaviour
         {
             Debug.Log("Found PLAYER!");
         }
-        enemyStates = States.Idle;
+        enemyStates = States.Patrol;
         currentPointIndex = 0;
         nextTarget = points[currentPointIndex];
     }
@@ -46,7 +54,7 @@ public class EnemyManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        float DistToPlayer = Vector3.Distance(transform.position, Player.transform.position);
         switch (enemyStates)
         {
             case States.Idle: 
@@ -69,24 +77,11 @@ public class EnemyManager : MonoBehaviour
                                         break;
         }
 
-        if(Input.GetKeyDown(KeyCode.Y))
-        {
-            enemyStates = States.Idle;
-        }
-        if(Input.GetKeyDown(KeyCode.U))
-        {
-            enemyStates = States.Patrol;
-            
-        }
-        if(Input.GetKeyDown(KeyCode.P))
-        {
-            enemyStates = States.Attack;
-            
-        }
-        if(Input.GetKeyDown(KeyCode.F))
+        if (DistToPlayer <= disToFollow)
         {
             enemyStates = States.FollowPlayer;
         }
+
 
         //Detect player, Follow Player and then Attack player
 
@@ -113,14 +108,31 @@ public class EnemyManager : MonoBehaviour
 
     void FollowPlayer()
     {
-        if(Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(Player.transform.position.x, 0, Player.transform.position.z)) <= 4f)
+        if(Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(Player.transform.position.x, 0, Player.transform.position.z)) >= 7f)
         {
             enemyStates = States.Patrol;
         }
+
+        if(Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(Player.transform.position.x, 0, Player.transform.position.z)) <= 1f)
+        {
+            enemyStates = States.Attack;
+        }
+
         
     }
     void Attack()
     {
-
+     if (Time.time - lastAttackTime >= attackRate && enemyStates == States.Attack)
+     {
+       DamagePlayer();
+       lastAttackTime = Time.time; // Update last attack time
+     }
+     
     }
+  
+  void DamagePlayer()
+  {
+    m_Handler.ApplyDamage("Health", Damage);
+  }
+
 }
