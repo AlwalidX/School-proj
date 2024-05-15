@@ -21,6 +21,7 @@ public class EnemyController : MonoBehaviour
    bool CanAttack;
    public float AttackDistance;
    public float RateOfAttack = 0.4f;
+
 void Start()
 {
    Player = GameObject.FindWithTag("Player");
@@ -28,36 +29,42 @@ void Start()
    CanAttack = true;
 }
 
-  void Update()
- {
-    if(!isHostile)
+    void FixedUpdate()
     {
-   AiAgent.SetDestination(currentWayPoint.position);
-    return;
-    }
-    else
-    {
-       float DistToPlayer = Vector3.Distance(transform.position, Player.transform.position);
-      if(DistToPlayer < DistToPlayerFollow)
-      {
-       AiAgent.speed = 0;
+        if(!isHostile)
+        {
+            AiAgent.SetDestination(currentWayPoint.position);
+            Debug.Log("Enemy not hostile");
+        } else
+        {
+            // Hes hostile
+            float DistanceToPlayer = Vector3.Distance(transform.position, Player.transform.position);
+            if(DistanceToPlayer < DistToPlayerFollow) 
+            {
+                //WE should follow our player
+                AiAgent.speed = speed;
+                    AiAgent.SetDestination(Player.transform.position + new Vector3(0,2,0));
+                Debug.Log("Following player");
+            } else
+            {
+                //Player out of follow range
+                AiAgent.speed = speed;
+                Debug.Log("Player out of range");
 
-      }
-      else
-      {
-         AiAgent.speed = speed;
-      }
+                //We should probably return him into patrol mode
+                isHostile = false;
+            }
 
-      if(DistToPlayer < AttackDistance && CanAttack)
-      {
-        CanAttack = false;
-        DamagePlayer();
-      }
-      AiAgent.SetDestination(Player.transform.position);
+            if(DistanceToPlayer < AttackDistance && CanAttack)
+            {
+                Debug.Log("Attacking?");
+                CanAttack = false;
+                DamagePlayer();
+            }
+        }
     }
-  } 
-  
-  void DamagePlayer()
+
+    void DamagePlayer()
   {
     m_Handler.ApplyDamage("Health", Damage);
     Invoke("ResetFire", RateOfAttack);
@@ -72,5 +79,7 @@ void Start()
   {
    Gizmos.color = Color.red;
     Gizmos.DrawWireSphere(transform.position, DistToPlayerFollow);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, AttackDistance);
   }
 }
