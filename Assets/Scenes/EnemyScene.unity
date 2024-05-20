@@ -430,6 +430,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AiAgent: {fileID: 0}
+  m_Handler: {fileID: 0}
+  Damage: 15
+  RateOfAttack: 0.4
+  attackRate: 2
   points:
   - {fileID: 1598042261}
   - {fileID: 1472479705}

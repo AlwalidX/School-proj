@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using DevionGames.StatSystem;
 
-public class EnemyManager : MonoBehaviour
+public class GuardManager : MonoBehaviour
 {
 
     public float health = 35;
@@ -12,10 +12,9 @@ public class EnemyManager : MonoBehaviour
      public NavMeshAgent AiAgent;
 
       GameObject Player;
-        public StatsHandler m_Handler;
    public float Damage = 15f;
     public float RateOfAttack = 0.4f;
-
+     EnemyManager m_EnemyManager;
 
  public float attackRate = 2.0f; // Time between attacks in seconds
     private float lastAttackTime = 0.0f;
@@ -43,10 +42,10 @@ public class EnemyManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Player = GameObject.FindWithTag("Player");
+        Player = GameObject.FindWithTag("Enemy");
         if(Player != null)
         {
-            Debug.Log("Found PLAYER!");
+            Debug.Log("Found ENEMY!");
         }
         enemyStates = States.Patrol;
         currentPointIndex = 0;
@@ -126,24 +125,24 @@ public class EnemyManager : MonoBehaviour
     {
      if (Time.time - lastAttackTime >= attackRate && enemyStates == States.Attack)
      {
-       DamagePlayer();
+       DamageEnemy();
        lastAttackTime = Time.time; // Update last attack time
      }
      
     }
   
-  public void DamageEnemy(float damage)
+  public void DamageGuard(float damage)
   {
     health -= damage;
     if (health <= 0)
     {
         Destroy(gameObject);
-
+        
     }
   }
-  void DamagePlayer()
+  void DamageEnemy()
   {
-    m_Handler.ApplyDamage("Health", Damage);
+   m_EnemyManager.DamageEnemy(Damage);
   }
 
 }
