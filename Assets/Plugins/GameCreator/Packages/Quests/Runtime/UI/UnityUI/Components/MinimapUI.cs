@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameCreator.Runtime.Cameras;
 using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using UnityEngine;
@@ -9,13 +10,15 @@ namespace GameCreator.Runtime.Quests.UnityUI
     [AddComponentMenu("Game Creator/UI/Quests/Minimap UI")]
     [Icon(RuntimePaths.PACKAGES + "Quests/Editor/Gizmos/GizmoMinimapUI.png")]
     
+    [DefaultExecutionOrder(ApplicationManager.EXECUTION_ORDER_LAST_LATER)]
+    
     [Serializable]
     public class MinimapUI : MonoBehaviour
     {
         // EXPOSED MEMBERS: -----------------------------------------------------------------------
         
         [SerializeField] private PropertyGetGameObject m_Character = GetGameObjectPlayer.Create();
-        [SerializeField] private PropertyGetGameObject m_Camera = GetGameObjectMainCamera.Create();
+        [SerializeField] private PropertyGetGameObject m_Camera = GetGameObjectCameraMain.Create;
         [SerializeField] private PropertyGetDecimal m_Radius = GetDecimalDecimal.Create(10f);
 
         [SerializeField] private InterestLayer m_Layers = InterestLayers.Every;

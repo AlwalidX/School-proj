@@ -34,8 +34,8 @@ namespace GameCreator.Editor.Quests
         private readonly SerializedProperty m_PropertyQuest;
         private readonly SerializedProperty m_PropertyTaskId;
         
-        private VisualElement m_Head;
-        private VisualElement m_Body;
+        private readonly VisualElement m_Head;
+        private readonly VisualElement m_Body;
 
         // CONSTRUCTOR: ---------------------------------------------------------------------------
         
@@ -54,10 +54,10 @@ namespace GameCreator.Editor.Quests
             this.m_PropertyQuest = this.m_Property.FindPropertyRelative("m_Quest");
             this.m_PropertyTaskId = this.m_Property.FindPropertyRelative("m_TaskId");
 
-            PropertyTool fieldQuest = new PropertyTool(this.m_PropertyQuest);
+            PropertyField fieldQuest = new PropertyField(this.m_PropertyQuest);
             this.m_Head.Add(fieldQuest);
 
-            fieldQuest.EventChange += this.OnChangeQuest;
+            fieldQuest.RegisterValueChangeCallback(this.OnChangeQuest);
             this.RefreshTask(this.m_PropertyQuest.objectReferenceValue as Quest);
         }
         
@@ -90,8 +90,10 @@ namespace GameCreator.Editor.Quests
             {
                 label = EMPTY_LABEL
             };
-
+            
+            AlignLabel.On(dropdownField);
             dropdownField.SetEnabled(quest != null);
+            
             dropdownField.RegisterValueChangedCallback(changeEvent =>
             {
                 if (!tasksList.TryGetValue(changeEvent.newValue, out Entry entry)) return;
@@ -100,7 +102,7 @@ namespace GameCreator.Editor.Quests
                 SerializedObject serializedObject = this.m_Property.serializedObject;
                 SerializationUtils.ApplyUnregisteredSerialization(serializedObject);
             });
-
+            
             this.m_Body.Add(dropdownField);
         }
         

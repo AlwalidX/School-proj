@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbbfb1f418dea014fa3e5e3b38b148a5, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f77e0194c46f384a896dee472fa7213, type: 3}
   m_Name: inventory.general
   m_EditorClassIdentifier: 
   m_Repository:
-    rid: 2980885344763248770
+    rid: 2980885344763248882
   references:
     version: 2
     RefIds:
-    - rid: 2980885344763248770
+    - rid: 2980885344763248882
       type: {class: InventoryRepository, ns: GameCreator.Runtime.Inventory, asm: GameCreator.Runtime.Inventory}
       data:
         m_Items:

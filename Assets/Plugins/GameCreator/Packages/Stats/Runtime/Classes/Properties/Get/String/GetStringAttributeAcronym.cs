@@ -10,15 +10,19 @@ namespace GameCreator.Runtime.Stats
     [Image(typeof(IconAttr), ColorTheme.Type.Blue)]
     [Description("Returns the acronym of an Attribute")]
     
-    [Serializable] [HideLabelsInEditor]
+    [Serializable]
     public class GetStringAttributeAcronym : PropertyTypeGetString
     {
-        [SerializeField] protected Attribute m_Attribute;
+        [SerializeField] protected PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
 
-        public override string Get(Args args) => this.m_Attribute != null 
-            ? this.m_Attribute.GetAcronym(args) 
-            : string.Empty;
+        public override string Get(Args args)
+        {
+            Attribute attribute = this.m_Attribute.Get(args);
+            return attribute != null
+                ? attribute.GetAcronym(args)
+                : string.Empty;
+        }
 
-        public override string String => this.m_Attribute != null ? this.m_Attribute.ID.String : "(none)";
+        public override string String => this.m_Attribute.ToString();
     }
 }

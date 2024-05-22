@@ -1,4 +1,5 @@
 using System;
+using GameCreator.Runtime.Common;
 using UnityEngine;
 
 namespace GameCreator.Runtime.Stats
@@ -11,12 +12,11 @@ namespace GameCreator.Runtime.Stats
         private bool m_IsExpanded = false;
         #pragma warning restore 414
         
-        [SerializeField] private bool m_ChangeBase = false;
-        [SerializeField] private double m_Base = 1;
+        [SerializeField] private EnablerDouble m_ChangeBase = new EnablerDouble(false, 1f);
         
         // PROPERTIES: ----------------------------------------------------------------------------
 
-        public bool ChangeBase => m_ChangeBase;
-        public double Base => m_Base;
+        public bool ChangeBase => this.m_ChangeBase.IsEnabled;
+        public double Base => this.m_ChangeBase.Value;
     }
 }

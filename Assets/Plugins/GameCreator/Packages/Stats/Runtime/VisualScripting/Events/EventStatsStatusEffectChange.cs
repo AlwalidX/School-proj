@@ -1,3 +1,5 @@
+using System;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -23,47 +25,33 @@ namespace GameCreator.Runtime.Stats
         "Focus", "Raise"
     )]
 
-    [System.Serializable]
+    [Serializable]
     public class EventStatsStatusEffectChange : VisualScripting.Event
     {
         // EXPOSED MEMBERS: -----------------------------------------------------------------------
 
         [SerializeField] private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
-
         [SerializeField] private StatusEffectOrAny m_StatusEffect = new StatusEffectOrAny();
 
         // MEMBERS: -------------------------------------------------------------------------------
 
-        private Traits m_TargetTraits;
+        [NonSerialized] private Traits m_TargetTraits;
+        [NonSerialized] private Args m_Args;
 
         // INITIALIZERS: --------------------------------------------------------------------------
-
-        protected override void OnStart(Trigger trigger)
+        
+        protected override void OnEnable(Trigger trigger)
         {
-            base.OnStart(trigger);
+            base.OnEnable(trigger);
+
+            this.m_Args = new Args(trigger.gameObject);
             
             if (this.m_TargetTraits != null)
             {
                 this.m_TargetTraits.RuntimeStatusEffects.EventChange -= this.OnChange;
             }
             
-            GameObject target = this.m_Target.Get(trigger.gameObject);
-            if (target == null) return;
-
-            this.m_TargetTraits = target.Get<Traits>();
-            if (this.m_TargetTraits == null) return;
-
-            this.m_TargetTraits.RuntimeStatusEffects.EventChange += this.OnChange;
-        }
-
-        protected override void OnEnable(Trigger trigger)
-        {
-            base.OnEnable(trigger);
-
-            GameObject target = this.m_Target.Get(trigger.gameObject);
-            if (target == null) return;
-
-            this.m_TargetTraits = target.Get<Traits>();
+            this.m_TargetTraits = this.m_Target.Get<Traits>(this.m_Args);
             if (this.m_TargetTraits == null) return;
 
             this.m_TargetTraits.RuntimeStatusEffects.EventChange += this.OnChange;
@@ -81,8 +69,10 @@ namespace GameCreator.Runtime.Stats
 
         private void OnChange(IdString sourceStatusEffectID)
         {
-            if (!this.m_StatusEffect.Match(sourceStatusEffectID)) return;
-            this.m_Trigger.Execute(this.m_TargetTraits.gameObject);
+            if (this.m_StatusEffect.Match(sourceStatusEffectID, this.m_Args))
+            {
+                _ = this.m_Trigger.Execute(this.m_TargetTraits.gameObject);
+            }
         }
     }
 }

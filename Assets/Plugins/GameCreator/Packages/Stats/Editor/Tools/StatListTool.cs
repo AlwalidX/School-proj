@@ -15,8 +15,6 @@ namespace GameCreator.Editor.Stats
 
         // MEMBERS: -------------------------------------------------------------------------------
 
-        private readonly StatList m_StatList;
-        
         private Button m_ButtonAdd;
 
         // PROPERTIES: ----------------------------------------------------------------------------
@@ -46,8 +44,6 @@ namespace GameCreator.Editor.Stats
             : base(property, "m_Stats")
         {
             this.SerializedObject.Update();
-            
-            this.m_StatList = property.GetValue<StatList>();
         }
 
         // PROTECTED METHODS: ---------------------------------------------------------------------

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameCreator.Runtime.Cameras;
 using GameCreator.Runtime.Common;
 using UnityEngine;
 
@@ -8,12 +9,14 @@ namespace GameCreator.Runtime.Quests.UnityUI
     [AddComponentMenu("Game Creator/UI/Quests/Indicators UI")]
     [Icon(RuntimePaths.PACKAGES + "Quests/Editor/Gizmos/GizmoIndicatorUI.png")]
     
+    [DefaultExecutionOrder(ApplicationManager.EXECUTION_ORDER_LAST_LATER)]
+    
     [Serializable]
     public class IndicatorsUI : MonoBehaviour
     {
         // EXPOSED MEMBERS: -----------------------------------------------------------------------
 
-        [SerializeField] private PropertyGetGameObject m_Camera = GetGameObjectMainCamera.Create();
+        [SerializeField] private PropertyGetGameObject m_Camera = GetGameObjectCameraMain.Create;
 
         [SerializeField] private InterestLayer m_Layers = InterestLayers.Every;
         
@@ -63,7 +66,7 @@ namespace GameCreator.Runtime.Quests.UnityUI
 
             for (int i = 0; i < points.Count; i++)
             {
-                TSpotPoi spot = PointsOfInterest.List[i];
+                TSpotPoi spot = points[i];
                 if (spot == null) continue;
 
                 Vector3 spotPosition = spot.Position;

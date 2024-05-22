@@ -9,6 +9,8 @@ namespace GameCreator.Runtime.Quests.UnityUI
     [AddComponentMenu("Game Creator/UI/Quests/Quest UI")]
     [Icon(RuntimePaths.PACKAGES + "Quests/Editor/Gizmos/GizmoQuestUI.png")]
     
+    [DefaultExecutionOrder(ApplicationManager.EXECUTION_ORDER_LAST_LATER)]
+    
     [Serializable]
     public class QuestUI : TQuestUI
     {

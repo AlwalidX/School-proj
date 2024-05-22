@@ -12,6 +12,8 @@ namespace GameCreator.Runtime.Stats
         
         [field: NonSerialized] public double Value { get; private set; }
 
+        public int Count => this.m_List.Count;
+
         // CONSTRUCTORS: --------------------------------------------------------------------------
 
         public ModifierList(int statID)
@@ -56,6 +58,7 @@ namespace GameCreator.Runtime.Stats
 
         public void Clear()
         {
+            this.Value = 0;
             this.m_List.Clear();
         }
     }

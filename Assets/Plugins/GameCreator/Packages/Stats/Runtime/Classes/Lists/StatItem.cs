@@ -9,14 +9,11 @@ namespace GameCreator.Runtime.Stats
     [Serializable]
     public class StatItem : TPolymorphicItem<StatItem>
     {
-        [SerializeField] private bool m_IsHidden = false;
+        [SerializeField] private bool m_IsHidden;
         [SerializeField] private Stat m_Stat;
 
-        [SerializeField] private bool m_ChangeBase = false;
-        [SerializeField] private double m_Base = 100;
-        
-        [SerializeField] private bool m_ChangeFormula = false;
-        [SerializeField] private Formula m_Formula;
+        [SerializeField] private EnablerDouble m_ChangeBase = new EnablerDouble(false, 100);
+        [SerializeField] private EnablerFormula m_ChangeFormula = new EnablerFormula(false, null);
 
         // PROPERTIES: ----------------------------------------------------------------------------
 
@@ -32,7 +29,9 @@ namespace GameCreator.Runtime.Stats
             get
             {
                 if (this.m_Stat == null) return 0f;
-                return this.m_ChangeBase ? this.m_Base : this.m_Stat.Value;
+                return this.m_ChangeBase.IsEnabled
+                    ? this.m_ChangeBase.Value
+                    : this.m_Stat.Value;
             }
         }
 
@@ -41,7 +40,9 @@ namespace GameCreator.Runtime.Stats
             get
             {
                 if (this.m_Stat == null) return null;
-                return this.m_ChangeFormula ? this.m_Formula : this.m_Stat.Formula;
+                return this.m_ChangeFormula.IsEnabled
+                    ? this.m_ChangeFormula.Value
+                    : this.m_Stat.Formula;
             }
         }
     }

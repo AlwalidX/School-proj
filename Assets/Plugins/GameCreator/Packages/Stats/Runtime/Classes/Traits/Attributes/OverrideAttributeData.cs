@@ -1,4 +1,5 @@
 using System;
+using GameCreator.Runtime.Common;
 using UnityEngine;
 
 namespace GameCreator.Runtime.Stats
@@ -11,12 +12,11 @@ namespace GameCreator.Runtime.Stats
         private bool m_IsExpanded = false;
         #pragma warning restore 414
         
-        [SerializeField] private bool m_ChangeStartPercent = false;
-        [SerializeField] [Range(0f, 1f)] private double m_StartPercent = 1;
+        [SerializeField] private EnablerRatio m_ChangeStartPercent = new EnablerRatio(false, 1f);
 
         // PROPERTIES: ----------------------------------------------------------------------------
 
-        public bool ChangeStartPercent => m_ChangeStartPercent;
-        public double StartPercent => m_StartPercent;
+        public bool ChangeStartPercent => this.m_ChangeStartPercent.IsEnabled;
+        public double StartPercent => this.m_ChangeStartPercent.Value;
     }
 }

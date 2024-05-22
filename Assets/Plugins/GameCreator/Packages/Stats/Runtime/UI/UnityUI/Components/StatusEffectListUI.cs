@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using UnityEngine;
 
@@ -17,6 +18,8 @@ namespace GameCreator.Runtime.Stats.UnityUI
             StatusEffectTypeMask.Positive |
             StatusEffectTypeMask.Negative |
             StatusEffectTypeMask.Neutral;
+
+        [SerializeField] private bool m_ShowHidden = false;
 
         [SerializeField] private RectTransform m_Container;
         [SerializeField] private GameObject m_PrefabStatusEffect;
@@ -109,7 +112,8 @@ namespace GameCreator.Runtime.Stats.UnityUI
 
                 int statusEffectType = (int) statusEffect.Type;
                 if ((allowedTypes & statusEffectType) == 0) continue;
-
+                if (statusEffect.IsHidden && !this.m_ShowHidden) continue;
+                
                 if (this.m_StatusEffects.ContainsKey(activeStatusEffect))
                 {
                     removeCandidates.Remove(activeStatusEffect);

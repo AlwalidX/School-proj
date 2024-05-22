@@ -22,18 +22,14 @@ namespace GameCreator.Runtime.Stats.UnityUI
     {
         [SerializeField]
         private PropertyGetGameObject m_StatUI = GetGameObjectInstance.Create();
+        [SerializeField] private PropertyGetStat m_Stat = new PropertyGetStat();
 
-        [SerializeField] private Stat m_Stat;
-
-        public override string Title => string.Format(
-            "Change {0} Stat to {1}", 
-            this.m_StatUI, 
-            this.m_Stat != null ? this.m_Stat.name : "(none)"
-        );
+        public override string Title => $"Change {this.m_StatUI} Stat to {this.m_Stat}";
         
         protected override Task Run(Args args)
         {
-            if (this.m_Stat == null) return DefaultResult;
+            Stat stat = this.m_Stat.Get(args);
+            if (stat == null) return DefaultResult;
             
             GameObject statUIGameObject = this.m_StatUI.Get(args);
             if (statUIGameObject == null) return DefaultResult;
@@ -41,7 +37,7 @@ namespace GameCreator.Runtime.Stats.UnityUI
             StatUI statUI = statUIGameObject.Get<StatUI>();
             if (statUI == null) return DefaultResult;
 
-            statUI.Stat = this.m_Stat;
+            statUI.Stat = stat;
             return DefaultResult;
         }
     }

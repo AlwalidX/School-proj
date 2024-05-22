@@ -1,4 +1,5 @@
 ﻿using System;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -33,52 +34,29 @@ namespace GameCreator.Runtime.Stats
 
         [SerializeField] private DetectionType m_When = DetectionType.OnChange;
 
-        [SerializeField] private Attribute m_Attribute;
+        [SerializeField] private PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
 
         // MEMBERS: -------------------------------------------------------------------------------
 
         [NonSerialized] private Traits m_TargetTraits;
+        [NonSerialized] private Attribute m_TargetAttribute;
+        
         [NonSerialized] private double m_LastValue;
 
         // INITIALIZERS: --------------------------------------------------------------------------
 
-        protected override void OnStart(Trigger trigger)
-        {
-            base.OnStart(trigger);
-            if (this.m_Attribute == null) return;
-            
-            if (this.m_TargetTraits != null)
-            {
-                this.m_TargetTraits.EventChange -= this.OnChange;
-            }
-            
-            GameObject target = this.m_Target.Get(trigger.gameObject);
-            if (target == null) return;
-
-            this.m_TargetTraits = target.Get<Traits>();
-            if (this.m_TargetTraits == null) return;
-            
-            this.m_TargetTraits.EventChange += this.OnChange;
-            
-            if (this.m_Attribute == null) return;
-            this.m_LastValue = this.m_TargetTraits.RuntimeAttributes.Get(this.m_Attribute.ID).Value;
-        }
-
         protected override void OnEnable(Trigger trigger)
         {
             base.OnEnable(trigger);
-            if (this.m_Attribute == null) return;
 
-            GameObject target = this.m_Target.Get(trigger.gameObject);
-            if (target == null) return;
+            this.m_TargetAttribute = this.m_Attribute.Get(trigger.gameObject);
+            if (this.m_TargetAttribute == null) return;
 
-            this.m_TargetTraits = target.Get<Traits>();
+            this.m_TargetTraits = this.m_Target.Get<Traits>(trigger.gameObject);
             if (this.m_TargetTraits == null) return;
             
             this.m_TargetTraits.EventChange += this.OnChange;
-            
-            if (this.m_Attribute == null) return;
-            this.m_LastValue = this.m_TargetTraits.RuntimeAttributes.Get(this.m_Attribute.ID).Value;
+            this.m_LastValue = this.m_TargetTraits.RuntimeAttributes.Get(m_TargetAttribute.ID).Value;
         }
 
         protected override void OnDisable(Trigger trigger)
@@ -93,18 +71,20 @@ namespace GameCreator.Runtime.Stats
 
         private void OnChange()
         {
-            if (this.m_Attribute == null) return;
+            if (this.m_TargetAttribute == null) return;
 
-            double nextLValue = this.m_TargetTraits.RuntimeAttributes.Get(this.m_Attribute.ID).Value;
-            double prevValue = this.m_LastValue;
+            double nextLValue = this.m_TargetTraits
+                .RuntimeAttributes
+                .Get(this.m_TargetAttribute.ID).Value;
             
+            double prevValue = this.m_LastValue;
             this.m_LastValue = nextLValue;
 
             if (Math.Abs(nextLValue - prevValue) < float.Epsilon) return;
             if (this.m_When == DetectionType.OnIncrease && nextLValue <= prevValue) return;
             if (this.m_When == DetectionType.OnDecrease && nextLValue >= prevValue) return;
             
-            this.m_Trigger.Execute(this.m_TargetTraits.gameObject);
+            _ = this.m_Trigger.Execute(this.m_TargetTraits.gameObject);
         }
     }
 }

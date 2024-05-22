@@ -13,14 +13,16 @@ namespace GameCreator.Runtime.Stats
     [Serializable] [HideLabelsInEditor]
     public class GetColorAttribute : PropertyTypeGetColor
     {
-        [SerializeField] private Attribute m_Attribute;
+        [SerializeField] private PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
 
-        public override Color Get(Args args) => this.m_Attribute != null 
-            ? this.m_Attribute.Color 
-            : Color.black;
+        public override Color Get(Args args)
+        {
+            Attribute attribute = this.m_Attribute.Get(args);
+            return attribute != null
+                ? attribute.Color
+                : Color.black;
+        }
 
-        public override string String => this.m_Attribute != null
-            ? this.m_Attribute.ID.String 
-            : "(none)";
+        public override string String => this.m_Attribute.ToString();
     }
 }

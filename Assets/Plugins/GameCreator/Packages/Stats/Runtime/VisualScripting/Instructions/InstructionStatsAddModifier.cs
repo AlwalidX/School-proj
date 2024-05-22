@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -27,19 +28,12 @@ namespace GameCreator.Runtime.Stats
     public class InstructionStatsAddModifier : Instruction
     {
         [SerializeField] private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
-        
-        [SerializeField] private Stat m_Stat;
+
+        [SerializeField] private PropertyGetStat m_Stat = new PropertyGetStat();
         [SerializeField] private ModifierType m_Type = ModifierType.Constant;
         [SerializeField] private PropertyGetDecimal m_Value = new PropertyGetDecimal(15f);
 
-        public override string Title => string.Format(
-            "Add {0} to {1}[{2}]",
-            this.m_Value,
-            this.m_Target,
-            this.m_Stat != null 
-                ? this.m_Stat.ID.String 
-                : string.Empty
-        );
+        public override string Title => $"Add {this.m_Value} to {this.m_Target}[{this.m_Stat}]";
         
         protected override Task Run(Args args)
         {
@@ -48,14 +42,15 @@ namespace GameCreator.Runtime.Stats
 
             Traits traits = target.Get<Traits>();
             if (traits == null) return DefaultResult;
-            
-            if (this.m_Stat == null) return DefaultResult;
-            
-            RuntimeStatData stat = traits.RuntimeStats.Get(this.m_Stat.ID);
+
+            Stat stat = this.m_Stat.Get(args);
             if (stat == null) return DefaultResult;
+            
+            RuntimeStatData runtimeStat = traits.RuntimeStats.Get(stat.ID);
+            if (runtimeStat == null) return DefaultResult;
 
             float value = (float) this.m_Value.Get(args);
-            stat.AddModifier(this.m_Type, value);
+            runtimeStat.AddModifier(this.m_Type, value);
             
             return DefaultResult;
         }

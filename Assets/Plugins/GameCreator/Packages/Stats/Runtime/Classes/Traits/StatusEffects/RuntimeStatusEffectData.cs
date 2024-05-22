@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
@@ -9,14 +10,12 @@ namespace GameCreator.Runtime.Stats
     {
         // MEMBERS: -------------------------------------------------------------------------------
         
-        private readonly float m_StartTime;
-        private readonly float m_Duration;
+        [NonSerialized] private readonly float m_StartTime;
+        [NonSerialized] private readonly float m_Duration;
 
-        private readonly StatusEffect m_StatusEffect;
-
-        [System.NonSerialized] private GameObject m_OnStart;
-        [System.NonSerialized] private GameObject m_OnEnd;
-        [System.NonSerialized] private GameObject m_WhileActive;
+        [NonSerialized] private readonly StatusEffect m_StatusEffect;
+        
+        [NonSerialized] private RunnerConfig m_ConfigWhileActive;
 
         // PROPERTIES: ----------------------------------------------------------------------------
         
@@ -33,7 +32,7 @@ namespace GameCreator.Runtime.Stats
             this.m_Duration = statusEffect.GetDuration(this.Args);
 
             this.m_StatusEffect = statusEffect;
-
+            
             _ = this.RunOnStart();
             _ = this.RunWhileActive();
         }
@@ -50,74 +49,55 @@ namespace GameCreator.Runtime.Stats
 
         private async Task RunOnStart()
         {
-            if (this.m_OnStart == null)
+            StatusEffect.LastAdded = this.m_StatusEffect;
+
+            RunnerConfig config = new RunnerConfig
             {
-                this.m_OnStart = RunInstructionsList.CreateTemplate(
-                    this.m_StatusEffect.OnStart.List
-                );   
-            }
-            
-            await RunInstructionsList.Run(
-                this.Args.Clone, this.m_OnStart,
-                new RunnerConfig
-                {
-                    Name = $"On Start {TextUtils.Humanize(this.m_StatusEffect.name)}",
-                    Location = new RunnerLocationPosition(
-                        this.Args.Self != null ? this.Args.Self.transform.position : Vector3.zero, 
-                        this.Args.Self != null ? this.Args.Self.transform.rotation : Quaternion.identity
-                    )
-                }
-            );
+                Name = $"On Start {TextUtils.Humanize(this.m_StatusEffect.name)}",
+                Location = new RunnerLocationLocation(
+                    this.Args.Self != null ? this.Args.Self.transform.position : Vector3.zero,
+                    this.Args.Self != null ? this.Args.Self.transform.rotation : Quaternion.identity
+                )
+            };
+
+            await this.m_StatusEffect.RunOnStart(this.Args.Clone, config);
         }
         
         private async Task RunOnEnd()
         {
-            if (this.m_OnEnd == null)
+            StatusEffect.LastRemoved = this.m_StatusEffect;
+
+            RunnerConfig config = new RunnerConfig
             {
-                this.m_OnEnd = RunInstructionsList.CreateTemplate(
-                    this.m_StatusEffect.OnEnd.List
-                );   
-            }
-            
-            await RunInstructionsList.Run(
-                this.Args.Clone, this.m_OnEnd,
-                new RunnerConfig
-                {
-                    Name = $"On End {TextUtils.Humanize(this.m_StatusEffect.name)}",
-                    Location = new RunnerLocationPosition(
-                        this.Args.Self != null ? this.Args.Self.transform.position : Vector3.zero, 
-                        this.Args.Self != null ? this.Args.Self.transform.rotation : Quaternion.identity
-                    )
-                }
-            );
+                Name = $"On End {TextUtils.Humanize(this.m_StatusEffect.name)}",
+                Location = new RunnerLocationLocation(
+                    this.Args.Self != null ? this.Args.Self.transform.position : Vector3.zero,
+                    this.Args.Self != null ? this.Args.Self.transform.rotation : Quaternion.identity
+                )
+            };
+
+            await this.m_StatusEffect.RunOnEnd(this.Args.Clone, config);
         }
 
         private async Task RunWhileActive()
         {
-            if (this.m_WhileActive == null)
+            RunnerConfig config = new RunnerConfig
             {
-                this.m_WhileActive = RunInstructionsList.CreateTemplate(
-                    this.m_StatusEffect.OnWhileActive.List
-                );   
-            }
-
-            while (this.m_WhileActive != null)
+                Name = $"While Active {TextUtils.Humanize(this.m_StatusEffect.name)}",
+                Location = new RunnerLocationLocation(
+                    this.Args.Self != null ? this.Args.Self.transform.position : Vector3.zero,
+                    this.Args.Self != null
+                        ? this.Args.Self.transform.rotation
+                        : Quaternion.identity
+                ),
+                Cancellable = this
+            };
+            
+            while (!this.IsCancelled && !ApplicationManager.IsExiting)
             {
                 int frame = Time.frameCount;
                 
-                await RunInstructionsList.Run(
-                    this.Args.Clone, this.m_WhileActive,
-                    new RunnerConfig
-                    {
-                        Name = $"While Active {TextUtils.Humanize(this.m_StatusEffect.name)}",
-                        Location = new RunnerLocationPosition(
-                            this.Args.Self != null ? this.Args.Self.transform.position : Vector3.zero, 
-                            this.Args.Self != null ? this.Args.Self.transform.rotation : Quaternion.identity
-                        ),
-                        Cancellable = this
-                    }
-                );
-
+                await this.m_StatusEffect.RunWhileActive(this.Args.Clone, config);
                 if (frame == Time.frameCount) await Task.Yield();
             }
         }
@@ -126,7 +106,7 @@ namespace GameCreator.Runtime.Stats
 
         public void Stop()
         {
-            if (this.m_WhileActive != null) this.IsCancelled = true;
+            this.IsCancelled = true;
             _ = this.RunOnEnd();
         }
 

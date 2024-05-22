@@ -8,6 +8,9 @@ using UnityEngine.UI;
 namespace GameCreator.Runtime.Quests.UnityUI
 {
     [DisallowMultipleComponent]
+    
+    [DefaultExecutionOrder(ApplicationManager.EXECUTION_ORDER_LAST_LATER)]
+    
     [Serializable]
     public abstract class TQuestUI : MonoBehaviour
     {

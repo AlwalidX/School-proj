@@ -49,20 +49,11 @@ namespace GameCreator.Runtime.Quests
         [SerializeField] private UniqueID m_UniqueId;
         [SerializeReference] private TasksTree m_Tasks = new TasksTree();
         
-        [SerializeField] private InstructionList m_OnActivate = new InstructionList();
-        [SerializeField] private InstructionList m_OnDeactivate = new InstructionList();
-        [SerializeField] private InstructionList m_OnComplete = new InstructionList();
-        [SerializeField] private InstructionList m_OnAbandon = new InstructionList();
-        [SerializeField] private InstructionList m_OnFail = new InstructionList();
-        
-        // MEMBERS: -------------------------------------------------------------------------------
-        
-        [NonSerialized] private GameObject m_TemplateOnActivate;
-        [NonSerialized] private GameObject m_TemplateOnDeactivate;
-        
-        [NonSerialized] private GameObject m_TemplateOnComplete;
-        [NonSerialized] private GameObject m_TemplateOnAbandon;
-        [NonSerialized] private GameObject m_TemplateOnFail;
+        [SerializeField] private RunInstructionsList m_OnActivate = new RunInstructionsList();
+        [SerializeField] private RunInstructionsList m_OnDeactivate = new RunInstructionsList();
+        [SerializeField] private RunInstructionsList m_OnComplete = new RunInstructionsList();
+        [SerializeField] private RunInstructionsList m_OnAbandon = new RunInstructionsList();
+        [SerializeField] private RunInstructionsList m_OnFail = new RunInstructionsList();
         
         // PROPERTIES: ----------------------------------------------------------------------------
 
@@ -89,15 +80,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnActivate(Args args)
         {
-            if (this.m_TemplateOnActivate == null)
-            {
-                this.m_TemplateOnActivate = RunInstructionsList.CreateTemplate(
-                    this.m_OnActivate
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnActivate, 
+            await this.m_OnActivate.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Activate Quest",
@@ -108,15 +92,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnDeactivate(Args args)
         {
-            if (this.m_TemplateOnDeactivate == null)
-            {
-                this.m_TemplateOnDeactivate = RunInstructionsList.CreateTemplate(
-                    this.m_OnDeactivate
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnDeactivate, 
+            await this.m_OnDeactivate.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Deactivate Quest",
@@ -127,15 +104,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnComplete(Args args)
         {
-            if (this.m_TemplateOnComplete == null)
-            {
-                this.m_TemplateOnComplete = RunInstructionsList.CreateTemplate(
-                    this.m_OnComplete
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnComplete, 
+            await this.m_OnComplete.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Complete Quest",
@@ -146,15 +116,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnAbandon(Args args)
         {
-            if (this.m_TemplateOnAbandon == null)
-            {
-                this.m_TemplateOnAbandon = RunInstructionsList.CreateTemplate(
-                    this.m_OnAbandon
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnAbandon, 
+            await this.m_OnAbandon.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Abandon Quest",
@@ -165,15 +128,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnFail(Args args)
         {
-            if (this.m_TemplateOnFail == null)
-            {
-                this.m_TemplateOnFail = RunInstructionsList.CreateTemplate(
-                    this.m_OnFail
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnFail, 
+            await this.m_OnFail.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Fail Quest",

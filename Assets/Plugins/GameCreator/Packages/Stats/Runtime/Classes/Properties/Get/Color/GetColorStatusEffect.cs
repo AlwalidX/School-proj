@@ -13,14 +13,17 @@ namespace GameCreator.Runtime.Stats
     [Serializable] [HideLabelsInEditor]
     public class GetColorStatusEffect : PropertyTypeGetColor
     {
-        [SerializeField] private StatusEffect m_StatusEffect;
+        [SerializeField]
+        protected PropertyGetStatusEffect m_StatusEffect = new PropertyGetStatusEffect();
 
-        public override Color Get(Args args) => this.m_StatusEffect != null 
-            ? this.m_StatusEffect.Color 
-            : Color.black;
+        public override Color Get(Args args)
+        {
+            StatusEffect statusEffect = this.m_StatusEffect.Get(args);
+            return statusEffect != null
+                ? statusEffect.Color
+                : Color.black;
+        }
 
-        public override string String => this.m_StatusEffect != null
-            ? this.m_StatusEffect.ID.String 
-            : "(none)";
+        public override string String => this.m_StatusEffect.ToString();
     }
 }

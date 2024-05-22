@@ -9,18 +9,18 @@ namespace GameCreator.Runtime.Stats
     {
         [SerializeField] private StatusEffectType m_Type = StatusEffectType.Positive;
         [SerializeField] private PropertyGetInteger m_MaxStack = new PropertyGetInteger(1);
-
-        [SerializeField] private bool m_Save = true;
-        [SerializeField] private bool m_HasDuration = false;
+        
+        [SerializeField] private bool m_HasDuration;
+        [SerializeField] private bool m_IsHidden;
         [SerializeField] private PropertyGetDecimal m_Duration = new PropertyGetDecimal(60f);
 
         // PROPERTIES: ----------------------------------------------------------------------------
 
         public StatusEffectType Type => this.m_Type;
-
-        public bool Save => this.m_Save;
         
         public bool HasDuration => this.m_HasDuration;
+
+        public bool IsHidden => this.m_IsHidden;
         
         // METHODS: -------------------------------------------------------------------------------
 

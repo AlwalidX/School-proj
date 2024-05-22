@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -24,19 +25,11 @@ namespace GameCreator.Runtime.Stats
     public class InstructionStatsChangeAttribute : Instruction
     {
         [SerializeField] private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
-        
-        [SerializeField] private Attribute m_Attribute;
+        [SerializeField] private PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
         
         [SerializeField] private ChangeDecimal m_Change = new ChangeDecimal(100f);
         
-        public override string Title => string.Format(
-            "{0}[{1}] {2}",
-            this.m_Target,
-            this.m_Attribute != null 
-                ? this.m_Attribute.ID.String  
-                : string.Empty,
-            this.m_Change
-        );
+        public override string Title => $"{this.m_Target}[{this.m_Attribute}] {this.m_Change}";
         
         protected override Task Run(Args args)
         {
@@ -45,12 +38,14 @@ namespace GameCreator.Runtime.Stats
 
             Traits traits = target.Get<Traits>();
             if (traits == null) return DefaultResult;
-            
-            if (this.m_Attribute == null) return DefaultResult;
-            RuntimeAttributeData attribute = traits.RuntimeAttributes.Get(this.m_Attribute.ID);
-            if (attribute == null) return DefaultResult;
 
-            attribute.Value = (float) this.m_Change.Get(attribute.Value, args);
+            Attribute attribute = this.m_Attribute.Get(args);
+            if (attribute == null) return DefaultResult;
+            
+            RuntimeAttributeData runtimeAttribute = traits.RuntimeAttributes.Get(attribute.ID);
+            if (runtimeAttribute == null) return DefaultResult;
+
+            runtimeAttribute.Value = (float) this.m_Change.Get(runtimeAttribute.Value, args);
             return DefaultResult;
         }
     }

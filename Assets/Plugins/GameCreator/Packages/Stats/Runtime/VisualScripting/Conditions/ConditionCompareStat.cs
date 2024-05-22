@@ -1,4 +1,5 @@
 using System;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -25,19 +26,14 @@ namespace GameCreator.Runtime.Stats
         // MEMBERS: -------------------------------------------------------------------------------
 
         [SerializeField] private PropertyGetGameObject m_Traits = GetGameObjectPlayer.Create();
-        [SerializeField] private Stat m_Stat;
+        [SerializeField] private PropertyGetStat m_Stat = new PropertyGetStat();
 
         [SerializeField] 
         private CompareDouble m_CompareTo = new CompareDouble();
 
         // PROPERTIES: ----------------------------------------------------------------------------
 
-        protected override string Summary => string.Format(
-            "{0}[{1}] {2}", 
-            this.m_Traits,
-            this.m_Stat != null ? this.m_Stat.ID.String : "(none)", 
-            this.m_CompareTo
-        );
+        protected override string Summary => $"{this.m_Traits}[{this.m_Stat}] {this.m_CompareTo}";
 
         // RUN METHOD: ----------------------------------------------------------------------------
 
@@ -48,10 +44,11 @@ namespace GameCreator.Runtime.Stats
 
             Traits traits = target.Get<Traits>();
             if (traits == null) return false;
+
+            Stat stat = this.m_Stat.Get(args);
+            if (stat == null) return false;
             
-            if (this.m_Stat == null) return false;
-            
-            double value = traits.RuntimeStats.Get(this.m_Stat.ID).Value;
+            double value = traits.RuntimeStats.Get(stat.ID).Value;
             return this.m_CompareTo.Match(value, args);
         }
     }

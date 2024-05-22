@@ -10,17 +10,20 @@ namespace GameCreator.Runtime.Stats
     [Image(typeof(IconAttr), ColorTheme.Type.Blue)]
     [Description("Returns the name of a Attribute")]
     
-    [Serializable] [HideLabelsInEditor]
+    [Serializable]
     public class GetStringAttributeName : PropertyTypeGetString
     {
-        [SerializeField] protected Attribute m_Attribute;
+        [SerializeField] protected PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
 
-        public override string Get(Args args) => this.m_Attribute != null 
-            ? this.m_Attribute.GetName(args) 
-            : string.Empty;
-
-        public override string String => this.m_Attribute != null
-            ? this.m_Attribute.ID.String 
-            : "(none)";
+        public override string Get(Args args)
+        {
+            Attribute attribute = this.m_Attribute.Get(args);
+            
+            return attribute != null
+                ? attribute.GetName(args)
+                : string.Empty;
+        }
+        
+        public override string String => this.m_Attribute.ToString();
     }
 }

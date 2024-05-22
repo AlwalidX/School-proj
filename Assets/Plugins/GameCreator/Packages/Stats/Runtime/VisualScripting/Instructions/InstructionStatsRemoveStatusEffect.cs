@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -31,19 +32,16 @@ namespace GameCreator.Runtime.Stats
     [Serializable]
     public class InstructionStatsRemoveStatusEffect : Instruction
     {
-        [SerializeField] private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
+        [SerializeField]
+        private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
 
         [SerializeField] private int m_Amount = 1;
-        [SerializeField] private StatusEffect m_StatusEffect;
 
-        public override string Title => string.Format(
-            "Remove {0} {1} from {2}",
-            this.m_Amount,
-            this.m_StatusEffect != null
-                ? this.m_StatusEffect.ID.String 
-                : "(none)",
-            this.m_Target
-        );
+        [SerializeField]
+        private PropertyGetStatusEffect m_StatusEffect = new PropertyGetStatusEffect();
+
+        public override string Title =>
+            $"Remove {this.m_Amount} {this.m_StatusEffect} from {this.m_Target}";
         
         protected override Task Run(Args args)
         {
@@ -52,10 +50,11 @@ namespace GameCreator.Runtime.Stats
 
             Traits traits = target.Get<Traits>();
             if (traits == null) return DefaultResult;
+
+            StatusEffect statusEffect = this.m_StatusEffect.Get(args);
+            if (statusEffect == null) return DefaultResult;
             
-            if (this.m_StatusEffect == null) return DefaultResult;
-            
-            traits.RuntimeStatusEffects.Remove(this.m_StatusEffect, this.m_Amount);
+            traits.RuntimeStatusEffects.Remove(statusEffect, this.m_Amount);
             return DefaultResult;
         }
     }

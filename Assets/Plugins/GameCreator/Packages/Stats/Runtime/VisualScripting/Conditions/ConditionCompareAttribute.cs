@@ -1,4 +1,5 @@
 using System;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -33,7 +34,7 @@ namespace GameCreator.Runtime.Stats
         // MEMBERS: -------------------------------------------------------------------------------
 
         [SerializeField] private PropertyGetGameObject m_Traits = GetGameObjectPlayer.Create();
-        [SerializeField] private Attribute m_Attribute;
+        [SerializeField] private PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
         [SerializeField] private ValueType m_Value = ValueType.Value;
         
         [SerializeField] 
@@ -41,12 +42,7 @@ namespace GameCreator.Runtime.Stats
 
         // PROPERTIES: ----------------------------------------------------------------------------
 
-        protected override string Summary => string.Format(
-            "{0}[{1}] {2}", 
-            this.m_Traits,
-            this.m_Attribute != null ? this.m_Attribute.ID.String : "(none)", 
-            this.m_CompareTo
-        );
+        protected override string Summary => $"{this.m_Traits}[{this.m_Attribute}] {this.m_CompareTo}";
 
         // RUN METHOD: ----------------------------------------------------------------------------
 
@@ -57,15 +53,16 @@ namespace GameCreator.Runtime.Stats
 
             Traits traits = target.Get<Traits>();
             if (traits == null) return false;
-            
-            if (this.m_Attribute == null) return false;
+
+            Attribute attribute = this.m_Attribute.Get(args);
+            if (attribute == null) return false;
 
             double value = this.m_Value switch
             {
-                ValueType.Value => traits.RuntimeAttributes.Get(this.m_Attribute.ID).Value,
-                ValueType.MaxValue => traits.RuntimeAttributes.Get(this.m_Attribute.ID).MaxValue,
-                ValueType.MinValue => traits.RuntimeAttributes.Get(this.m_Attribute.ID).MinValue,
-                ValueType.Ratio => traits.RuntimeAttributes.Get(this.m_Attribute.ID).Ratio,
+                ValueType.Value => traits.RuntimeAttributes.Get(attribute.ID).Value,
+                ValueType.MaxValue => traits.RuntimeAttributes.Get(attribute.ID).MaxValue,
+                ValueType.MinValue => traits.RuntimeAttributes.Get(attribute.ID).MinValue,
+                ValueType.Ratio => traits.RuntimeAttributes.Get(attribute.ID).Ratio,
                 _ => throw new ArgumentOutOfRangeException()
             };
             

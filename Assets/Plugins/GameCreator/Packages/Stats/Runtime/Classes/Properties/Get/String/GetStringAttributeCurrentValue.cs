@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using GameCreator.Runtime.Characters;
 using UnityEngine;
 using GameCreator.Runtime.Common;
 
@@ -11,28 +12,25 @@ namespace GameCreator.Runtime.Stats
     [Image(typeof(IconAttr), ColorTheme.Type.Blue)]
     [Description("Returns the current value of an Attribute")]
     
-    [Serializable] [HideLabelsInEditor]
+    [Serializable]
     public class GetStringAttributeCurrentValue : PropertyTypeGetString
     {
         [SerializeField] private PropertyGetGameObject m_Traits = GetGameObjectPlayer.Create();
-        [SerializeField] protected Attribute m_Attribute;
+        [SerializeField] protected PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
 
         public override string Get(Args args)
         {
-            if (this.m_Attribute == null) return string.Empty;
+            Attribute attribute = this.m_Attribute.Get(args);
+            if (attribute == null) return string.Empty;
             
             Traits traits = this.m_Traits.Get<Traits>(args);
             if (traits == null) return string.Empty;
 
             return traits.RuntimeAttributes
-                .Get(this.m_Attribute.ID)?
+                .Get(attribute.ID)?
                 .Value.ToString("0", CultureInfo.InvariantCulture) ?? string.Empty;
         }
 
-        public override string String => string.Format(
-            "{0}[{1}]", 
-            this.m_Traits, 
-            this.m_Attribute != null ? TextUtils.Humanize(this.m_Attribute.ID.String) : ""
-        );
+        public override string String => $"{this.m_Traits}[{this.m_Attribute}]";
     }
 }

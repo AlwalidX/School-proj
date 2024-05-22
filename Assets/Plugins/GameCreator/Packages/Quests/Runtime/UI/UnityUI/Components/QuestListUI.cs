@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ namespace GameCreator.Runtime.Quests.UnityUI
 {
     [AddComponentMenu("Game Creator/UI/Quests/Quest List UI")]
     [Icon(RuntimePaths.PACKAGES + "Quests/Editor/Gizmos/GizmoQuestListUI.png")]
+    
+    [DefaultExecutionOrder(ApplicationManager.EXECUTION_ORDER_LAST_LATER)]
     
     [Serializable]
     public class QuestListUI : MonoBehaviour

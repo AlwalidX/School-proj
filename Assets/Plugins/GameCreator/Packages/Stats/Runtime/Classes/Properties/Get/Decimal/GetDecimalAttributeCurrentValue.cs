@@ -1,4 +1,5 @@
 using System;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using UnityEngine;
 
@@ -14,8 +15,7 @@ namespace GameCreator.Runtime.Stats
     public class GetDecimalAttributeCurrentValue : PropertyTypeGetDecimal
     {
         [SerializeField] private PropertyGetGameObject m_Traits = GetGameObjectPlayer.Create();
-
-        [SerializeField] private Attribute m_Attribute;
+        [SerializeField] private PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
 
         public override double Get(Args args)
         {
@@ -24,17 +24,16 @@ namespace GameCreator.Runtime.Stats
             Traits traits = this.m_Traits.Get<Traits>(args);
             if (traits == null) return 0f;
 
-            return traits.RuntimeAttributes.Get(this.m_Attribute.ID)?.Value ?? 0f;
+            Attribute attribute = this.m_Attribute.Get(args);
+            if (attribute == null) return 0f;
+            
+            return traits.RuntimeAttributes.Get(attribute.ID)?.Value ?? 0f;
         }
 
         public static PropertyGetDecimal Create => new PropertyGetDecimal(
             new GetDecimalAttributeCurrentValue()
         );
 
-        public override string String => string.Format(
-            "{0}[{1}]", 
-            this.m_Traits, 
-            this.m_Attribute != null ? TextUtils.Humanize(this.m_Attribute.ID.String) : ""
-        );
+        public override string String => $"{this.m_Traits}[{this.m_Attribute}]";
     }
 }

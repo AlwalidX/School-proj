@@ -38,9 +38,12 @@ namespace GameCreator.Editor.Stats.UnityUI
             SerializedProperty statBase = this.serializedObject.FindProperty("m_Base");
             SerializedProperty statModifiers = this.serializedObject.FindProperty("m_Modifiers");
             SerializedProperty ratioFill = this.serializedObject.FindProperty("m_RatioFill");
+            
+            SerializedProperty activeIfModifiers = this.serializedObject.FindProperty("m_ActiveIfModifiers");
+            SerializedProperty activeIfNotModifiers = this.serializedObject.FindProperty("m_ActiveIfNotModifiers");
 
             PropertyField fieldTarget = new PropertyField(statTarget);
-            PropertyTool fieldStat = new PropertyTool(statAsset);
+            PropertyField fieldStat = new PropertyField(statAsset);
             
             this.m_Head.Add(fieldTarget);
             this.m_Head.Add(fieldStat);
@@ -53,14 +56,18 @@ namespace GameCreator.Editor.Stats.UnityUI
             this.m_Body.Add(new PropertyField(statValue));
             this.m_Body.Add(new PropertyField(statBase));
             this.m_Body.Add(new PropertyField(statModifiers));
-            this.m_Body.Add(new PropertyTool(ratioFill));
+            this.m_Body.Add(new PropertyField(ratioFill));
+            
+            this.m_Body.Add(new SpaceSmall());
+            this.m_Body.Add(new PropertyField(activeIfModifiers));
+            this.m_Body.Add(new PropertyField(activeIfNotModifiers));
             
             this.m_Body.SetEnabled(statAsset.objectReferenceValue != null);
-            fieldStat.EventChange += changeEvent =>
+            fieldStat.RegisterValueChangeCallback(changeEvent =>
             {
                 bool exists = changeEvent.changedProperty.objectReferenceValue != null;
                 this.m_Body.SetEnabled(exists);
-            };
+            });
             
             return this.m_Root;
         }

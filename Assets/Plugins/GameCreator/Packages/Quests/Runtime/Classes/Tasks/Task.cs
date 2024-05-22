@@ -25,24 +25,13 @@ namespace GameCreator.Runtime.Quests
         [SerializeField] private PropertyGetDecimal m_CountTo = new PropertyGetDecimal(3);
 
         [SerializeField] private PropertyGetDecimal m_ValueFrom = GetDecimalGlobalName.Create;
-        [SerializeReference] private VisualScripting.Event m_CheckWhen = new EventOnLateUpdate();
+        [SerializeField] private RunEvent m_CheckWhen = new RunEvent(new EventOnLateUpdate());
 
-        [SerializeField] private InstructionList m_OnActivate = new InstructionList();
-        [SerializeField] private InstructionList m_OnDeactivate = new InstructionList();
-        [SerializeField] private InstructionList m_OnComplete = new InstructionList();
-        [SerializeField] private InstructionList m_OnAbandon = new InstructionList();
-        [SerializeField] private InstructionList m_OnFail = new InstructionList();
-
-        // MEMBERS: -------------------------------------------------------------------------------
-
-        [NonSerialized] private GameObject m_TemplateOnActivate;
-        [NonSerialized] private GameObject m_TemplateOnDeactivate;
-
-        [NonSerialized] private GameObject m_TemplateOnComplete;
-        [NonSerialized] private GameObject m_TemplateOnAbandon;
-        [NonSerialized] private GameObject m_TemplateOnFail;
-
-        [NonSerialized] private GameObject m_TemplateTrigger;
+        [SerializeField] private RunInstructionsList m_OnActivate = new RunInstructionsList();
+        [SerializeField] private RunInstructionsList m_OnDeactivate = new RunInstructionsList();
+        [SerializeField] private RunInstructionsList m_OnComplete = new RunInstructionsList();
+        [SerializeField] private RunInstructionsList m_OnAbandon = new RunInstructionsList();
+        [SerializeField] private RunInstructionsList m_OnFail = new RunInstructionsList();
 
         // PROPERTIES: ----------------------------------------------------------------------------
 
@@ -72,15 +61,8 @@ namespace GameCreator.Runtime.Quests
 
         public async System.Threading.Tasks.Task RunOnActivate(Args args)
         {
-            if (this.m_TemplateOnActivate == null)
-            {
-                this.m_TemplateOnActivate = RunInstructionsList.CreateTemplate(
-                    this.m_OnActivate
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnActivate, 
+            await this.m_OnActivate.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Activate Task",
@@ -91,15 +73,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnDeactivate(Args args)
         {
-            if (this.m_TemplateOnDeactivate == null)
-            {
-                this.m_TemplateOnDeactivate = RunInstructionsList.CreateTemplate(
-                    this.m_OnDeactivate
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnDeactivate, 
+            await this.m_OnDeactivate.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Deactivate Task",
@@ -110,15 +85,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnComplete(Args args)
         {
-            if (this.m_TemplateOnComplete == null)
-            {
-                this.m_TemplateOnComplete = RunInstructionsList.CreateTemplate(
-                    this.m_OnComplete
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnComplete, 
+            await this.m_OnComplete.Run(
+                args.Clone,
                 new RunnerConfig
                 {
                     Name = "On Complete Task",
@@ -129,15 +97,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnAbandon(Args args)
         {
-            if (this.m_TemplateOnAbandon == null)
-            {
-                this.m_TemplateOnAbandon = RunInstructionsList.CreateTemplate(
-                    this.m_OnAbandon
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnAbandon, 
+            await this.m_OnAbandon.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Abandon Task",
@@ -148,15 +109,8 @@ namespace GameCreator.Runtime.Quests
         
         public async System.Threading.Tasks.Task RunOnFail(Args args)
         {
-            if (this.m_TemplateOnFail == null)
-            {
-                this.m_TemplateOnFail = RunInstructionsList.CreateTemplate(
-                    this.m_OnFail
-                );
-            }
-            
-            await RunInstructionsList.Run(
-                args.Clone, this.m_TemplateOnFail, 
+            await this.m_OnFail.Run(
+                args.Clone, 
                 new RunnerConfig
                 {
                     Name = "On Fail Task",
@@ -167,29 +121,7 @@ namespace GameCreator.Runtime.Quests
 
         public Trigger CreateCheckWhen(InstructionList instructions)
         {
-            if (this.m_TemplateTrigger == null)
-            {
-                this.m_TemplateTrigger = new GameObject
-                {
-                    name = "Task Detection",
-                    hideFlags = HideFlags.HideInHierarchy
-                };
-                
-                this.m_TemplateTrigger.SetActive(false);
-                this.m_TemplateTrigger.Add<Trigger>();
-            }
-            
-            Trigger.Reconfigure(
-                this.m_TemplateTrigger.Get<Trigger>(), 
-                this.m_CheckWhen, 
-                instructions
-            );
-            
-            GameObject instance = UnityEngine.Object.Instantiate(this.m_TemplateTrigger);
-            instance.hideFlags = HideFlags.None;
-            
-            instance.SetActive(true);
-            return instance.Get<Trigger>();
+            return this.m_CheckWhen.Start("Task Detection", instructions);
         }
         
         // STRING: --------------------------------------------------------------------------------

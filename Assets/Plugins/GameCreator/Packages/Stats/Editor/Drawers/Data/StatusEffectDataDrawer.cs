@@ -16,27 +16,27 @@ namespace GameCreator.Editor.Stats
             SerializedProperty type = property.FindPropertyRelative("m_Type");
             SerializedProperty maxStack = property.FindPropertyRelative("m_MaxStack");
             
-            SerializedProperty save = property.FindPropertyRelative("m_Save");
+            SerializedProperty isHidden = property.FindPropertyRelative("m_IsHidden");
             SerializedProperty hasDuration = property.FindPropertyRelative("m_HasDuration");
             SerializedProperty duration = property.FindPropertyRelative("m_Duration");
 
-            PropertyTool fieldType = new PropertyTool(type);
-            PropertyTool fieldMaxStack = new PropertyTool(maxStack);
-            PropertyTool fieldSave = new PropertyTool(save);
-            PropertyTool fieldHasDuration = new PropertyTool(hasDuration);
-            PropertyTool fieldDuration = new PropertyTool(duration);
+            PropertyField fieldType = new PropertyField(type);
+            PropertyField fieldMaxStack = new PropertyField(maxStack);
+            PropertyField fieldIsHidden = new PropertyField(isHidden);
+            PropertyField fieldHasDuration = new PropertyField(hasDuration);
+            PropertyField fieldDuration = new PropertyField(duration);
 
             VisualElement durationContent = new VisualElement();
             
             root.Add(fieldType);
             root.Add(fieldMaxStack);
             root.Add(new SpaceSmall());
-            root.Add(fieldSave);
+            root.Add(fieldIsHidden);
             root.Add(fieldHasDuration);
             root.Add(durationContent);
 
             if (hasDuration.boolValue) durationContent.Add(fieldDuration);
-            fieldHasDuration.EventChange += changeEvent =>
+            fieldHasDuration.RegisterValueChangeCallback(changeEvent =>
             {
                 durationContent.Clear();
                 if (changeEvent.changedProperty.boolValue)
@@ -44,7 +44,7 @@ namespace GameCreator.Editor.Stats
                     durationContent.Add(fieldDuration);
                     fieldDuration.Bind(property.serializedObject);
                 }
-            };
+            });
             
             return root;
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using GameCreator.Runtime.Characters;
 using UnityEngine;
 using GameCreator.Runtime.Common;
 
@@ -11,28 +12,25 @@ namespace GameCreator.Runtime.Stats
     [Image(typeof(IconStat), ColorTheme.Type.Red)]
     [Description("Returns the base value of a Stat")]
     
-    [Serializable] [HideLabelsInEditor]
+    [Serializable]
     public class GetStringStatBase : PropertyTypeGetString
     {
         [SerializeField] private PropertyGetGameObject m_Traits = GetGameObjectPlayer.Create();
-        [SerializeField] protected Stat m_Stat;
+        [SerializeField] protected PropertyGetStat m_Stat = new PropertyGetStat();
 
         public override string Get(Args args)
         {
-            if (this.m_Stat == null) return string.Empty;
+            Stat stat = this.m_Stat.Get(args);
+            if (stat == null) return string.Empty;
             
             Traits traits = this.m_Traits.Get<Traits>(args);
             if (traits == null) return string.Empty;
 
             return traits.RuntimeStats
-                .Get(this.m_Stat.ID)?
+                .Get(stat.ID)?
                 .Base.ToString("0", CultureInfo.InvariantCulture) ?? string.Empty;
         }
 
-        public override string String => string.Format(
-            "{0}[{1}].Base", 
-            this.m_Traits, 
-            this.m_Stat != null ? TextUtils.Humanize(this.m_Stat.ID.String) : ""
-        );
+        public override string String => $"{this.m_Traits}[{this.m_Stat}].Base";
     }
 }

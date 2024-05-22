@@ -7,6 +7,8 @@ namespace GameCreator.Runtime.Quests.UnityUI
     [AddComponentMenu("Game Creator/UI/Quests/Quest List UI Tab")]
     [Icon(RuntimePaths.PACKAGES + "Quests/Editor/Gizmos/GizmoQuestListUI.png")]
     
+    [DefaultExecutionOrder(ApplicationManager.EXECUTION_ORDER_LAST_LATER)]
+    
     public class QuestListUITab : MonoBehaviour, IPointerClickHandler, ISubmitHandler
     {
         // EXPOSED MEMBERS: -----------------------------------------------------------------------

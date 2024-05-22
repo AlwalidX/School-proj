@@ -1,4 +1,5 @@
 using System;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -31,9 +32,12 @@ namespace GameCreator.Runtime.Stats
     {
         // MEMBERS: -------------------------------------------------------------------------------
 
-        [SerializeField] private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
+        [SerializeField] 
+        private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
+
+        [SerializeField]
+        private PropertyGetStatusEffect m_StatusEffect = new PropertyGetStatusEffect();
         
-        [SerializeField] private StatusEffect m_StatusEffect;
         [SerializeField] private int m_MinAmount = 1;
 
         // PROPERTIES: ----------------------------------------------------------------------------
@@ -41,7 +45,7 @@ namespace GameCreator.Runtime.Stats
         protected override string Summary => string.Format(
             "{0} has {1} {2}",
             this.m_Target,
-            this.m_StatusEffect != null ? this.m_StatusEffect.ID.String : "(none)",
+            this.m_StatusEffect,
             this.m_MinAmount > 1 ? $"> {this.m_MinAmount}" : string.Empty
         );
 
@@ -54,10 +58,11 @@ namespace GameCreator.Runtime.Stats
 
             Traits traits = target.Get<Traits>();
             if (traits == null) return false;
+
+            StatusEffect statusEffect = this.m_StatusEffect.Get(args);
+            if (statusEffect == null) return false;
             
-            if (this.m_StatusEffect == null) return false;
-            
-            int amount = traits.RuntimeStatusEffects.GetActiveStackCount(this.m_StatusEffect.ID);
+            int amount = traits.RuntimeStatusEffects.GetActiveStackCount(statusEffect.ID);
             return amount >= this.m_MinAmount;
         }
     }

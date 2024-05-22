@@ -44,8 +44,8 @@ namespace GameCreator.Runtime.Inventory
             return new PropertyGetGameObject(instance);
         }
 
-        public override GameObject SceneReference => this.m_Journal != null
-            ? this.m_Journal.gameObject 
+        public override GameObject EditorValue => m_Journal != null
+            ? this.m_Journal.gameObject
             : null;
 
         public override string String => this.m_Journal != null

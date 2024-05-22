@@ -9,6 +9,8 @@ namespace GameCreator.Runtime.Quests.UnityUI
     [AddComponentMenu("Game Creator/UI/Quests/Selected Task UI")]
     [Icon(RuntimePaths.PACKAGES + "Quests/Editor/Gizmos/GizmoTaskUI.png")]
     
+    [DefaultExecutionOrder(ApplicationManager.EXECUTION_ORDER_LAST_LATER)]
+    
     public class SelectedTaskUI : TTaskUI
     {
         // EXPOSED MEMBERS: -----------------------------------------------------------------------

@@ -1,3 +1,4 @@
+using GameCreator.Editor.Common;
 using GameCreator.Runtime.Stats;
 using UnityEditor;
 using UnityEditor.UIElements;
@@ -12,16 +13,15 @@ namespace GameCreator.Editor.Stats
         {
             VisualElement root = new VisualElement();
             
-            SerializedProperty id = this.serializedObject.FindProperty("m_ID");
             SerializedProperty data = this.serializedObject.FindProperty("m_Data");
             SerializedProperty info = this.serializedObject.FindProperty("m_Info");
-
-            PropertyField fieldID = new PropertyField(id);
+            
             PropertyField fieldData = new PropertyField(data);
             PropertyField fieldInfo = new PropertyField(info);
-
-            root.Add(fieldID);
+            
+            root.Add(new SpaceSmaller());
             root.Add(fieldData);
+            root.Add(new SpaceSmaller());
             root.Add(fieldInfo);
 
             SerializedProperty onStart = this.serializedObject.FindProperty("m_OnStart");
@@ -32,9 +32,26 @@ namespace GameCreator.Editor.Stats
             PropertyField fieldOnEnd = new PropertyField(onEnd);
             PropertyField fieldWhileActive = new PropertyField(whileActive);
             
+            root.Add(new SpaceSmall());
+            root.Add(new LabelTitle("On Start:"));
+            root.Add(new SpaceSmaller());
             root.Add(fieldOnStart);
+            
+            root.Add(new SpaceSmall());
+            root.Add(new LabelTitle("On End:"));
+            root.Add(new SpaceSmaller());
             root.Add(fieldOnEnd);
+            
+            root.Add(new SpaceSmall());
+            root.Add(new LabelTitle("While Active:"));
+            root.Add(new SpaceSmaller());
             root.Add(fieldWhileActive);
+            
+            SerializedProperty id = this.serializedObject.FindProperty("m_ID");
+            PropertyField fieldID = new PropertyField(id);
+            
+            root.Add(new SpaceSmall());
+            root.Add(fieldID);
 
             return root;
         }

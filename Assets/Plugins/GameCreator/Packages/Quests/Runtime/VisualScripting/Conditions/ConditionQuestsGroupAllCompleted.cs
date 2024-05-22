@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.Variables;
 using GameCreator.Runtime.VisualScripting;
@@ -32,7 +33,7 @@ namespace GameCreator.Runtime.Quests
             Journal journal = this.m_Journal.Get<Journal>(args);
             if (journal == null) return false;
 
-            List<object> list = this.m_Quests.Get;
+            List<object> list = this.m_Quests.Get(args);
             if (list.Count == 0) return false;
             
             foreach (object item in list)

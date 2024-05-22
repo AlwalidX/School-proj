@@ -22,26 +22,23 @@ namespace GameCreator.Runtime.Stats.UnityUI
     {
         [SerializeField]
         private PropertyGetGameObject m_AttributeUI = GetGameObjectInstance.Create();
+        [SerializeField] private PropertyGetAttribute m_Attribute = new PropertyGetAttribute();
 
-        [SerializeField] private Attribute m_Attribute;
-
-        public override string Title => string.Format(
-            "Change {0} Attribute to {1}",
-            this.m_AttributeUI,
-            this.m_Attribute != null ? this.m_Attribute.name : "(none)"
-        );
+        public override string Title =>
+            $"Change {this.m_AttributeUI} Attribute to {this.m_Attribute}";
         
         protected override Task Run(Args args)
         {
-            if (this.m_Attribute == null) return DefaultResult;
+            Attribute attribute = this.m_Attribute.Get(args);
+            if (attribute == null) return DefaultResult;
             
             GameObject attributeUIGameObject = this.m_AttributeUI.Get(args);
             if (attributeUIGameObject == null) return DefaultResult;
 
             AttributeUI attributeUI = attributeUIGameObject.Get<AttributeUI>();
             if (attributeUI == null) return DefaultResult;
-
-            attributeUI.Attribute = this.m_Attribute;
+            
+            attributeUI.Attribute = attribute;
             return DefaultResult;
         }
     }

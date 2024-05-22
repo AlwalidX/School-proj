@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -30,17 +31,13 @@ namespace GameCreator.Runtime.Stats
     [Serializable]
     public class InstructionStatsAddStatusEffect : Instruction
     {
-        [SerializeField] private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
-        
-        [SerializeField] private StatusEffect m_StatusEffect;
+        [SerializeField]
+        private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
 
-        public override string Title => string.Format(
-            "Add {0} to {1}",
-            this.m_StatusEffect != null 
-                ? this.m_StatusEffect.ID.String 
-                : "(none)",
-            this.m_Target
-        );
+        [SerializeField]
+        private PropertyGetStatusEffect m_StatusEffect = new PropertyGetStatusEffect();
+
+        public override string Title => $"Add {this.m_StatusEffect} to {this.m_Target}";
         
         protected override Task Run(Args args)
         {
@@ -49,10 +46,11 @@ namespace GameCreator.Runtime.Stats
 
             Traits traits = target.Get<Traits>();
             if (traits == null) return DefaultResult;
+
+            StatusEffect statusEffect = this.m_StatusEffect.Get(args);
+            if (statusEffect == null) return DefaultResult;
             
-            if (this.m_StatusEffect == null) return DefaultResult;
-            
-            traits.RuntimeStatusEffects.Add(this.m_StatusEffect);
+            traits.RuntimeStatusEffects.Add(statusEffect);
             return DefaultResult;
         }
     }

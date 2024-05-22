@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using UnityEngine;
 

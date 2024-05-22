@@ -9,11 +9,10 @@ namespace GameCreator.Runtime.Stats
     [Serializable]
     public class AttributeItem :  TPolymorphicItem<AttributeItem>
     {
-        [SerializeField] private bool m_IsHidden = false;
+        [SerializeField] private bool m_IsHidden;
         [SerializeField] private Attribute m_Attribute;
         
-        [SerializeField] private bool m_ChangeStartPercent = false;
-        [SerializeField] [Range(0f, 1f)] private float m_StartPercent = 1f;
+        [SerializeField] private EnablerRatio m_ChangeStartPercent = new EnablerRatio(false, 1f);
 
         // PROPERTIES: ----------------------------------------------------------------------------
 
@@ -32,7 +31,9 @@ namespace GameCreator.Runtime.Stats
             get
             {
                 if (this.m_Attribute == null) return 0f;
-                return this.m_ChangeStartPercent ? this.m_StartPercent : this.m_Attribute.StartPercent;
+                return this.m_ChangeStartPercent.IsEnabled
+                    ? this.m_ChangeStartPercent.Value
+                    : this.m_Attribute.StartPercent;
             }
         }
     }

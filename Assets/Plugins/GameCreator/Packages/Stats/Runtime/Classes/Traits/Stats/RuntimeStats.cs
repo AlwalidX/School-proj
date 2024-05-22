@@ -54,7 +54,7 @@ namespace GameCreator.Runtime.Stats
                     throw new Exception(error);
                 }
 
-                RuntimeStatData data = new RuntimeStatData(this.m_Traits, stat);
+                RuntimeStatData data = new RuntimeStatData(this.m_Traits.gameObject, stat);
                 if (!stat.IsHidden && 
                     overrideStats.TryGetValue(statID, out OverrideStatData overrideData))
                 {

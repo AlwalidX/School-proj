@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Globalization;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.Common.UnityUI;
 using UnityEngine;
@@ -24,6 +25,9 @@ namespace GameCreator.Runtime.Stats.UnityUI
         [SerializeField] private TextReference m_Modifiers = new TextReference();
 
         [SerializeField] private Image m_RatioFill;
+
+        [SerializeField] private GameObject m_ActiveIfModifiers;
+        [SerializeField] private GameObject m_ActiveIfNotModifiers;
 
         // MEMBERS: -------------------------------------------------------------------------------
 
@@ -124,7 +128,7 @@ namespace GameCreator.Runtime.Stats.UnityUI
             Traits traits = this.m_LastTarget.Get<Traits>();
             if (traits == null) return;
 
-            if (this.m_Common.Icon != null) this.m_Common.Icon.overrideSprite = this.m_Stat.Icon;
+            if (this.m_Common.Icon != null) this.m_Common.Icon.overrideSprite = this.m_Stat.GetIcon(this.m_Args);
             if (this.m_Common.Color != null) this.m_Common.Color.color = this.m_Stat.Color;
 
             this.m_Common.Name.Text = this.m_Stat.GetName(this.m_Args);
@@ -139,6 +143,11 @@ namespace GameCreator.Runtime.Stats.UnityUI
             this.m_Modifiers.Text = FromDouble(stat.ModifiersValue, "+#;-#;0");
             
             if (this.m_RatioFill != null) this.m_RatioFill.fillAmount = (float) stat.Value;
+
+            bool hasModifiers = Mathf.Approximately((float) stat.ModifiersValue, 0) == false;
+            
+            if (this.m_ActiveIfModifiers != null) this.m_ActiveIfModifiers.SetActive(hasModifiers);
+            if (this.m_ActiveIfNotModifiers != null) this.m_ActiveIfNotModifiers.SetActive(!hasModifiers);
         }
 
         private void UpdateTargetEvents()

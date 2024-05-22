@@ -25,7 +25,7 @@ namespace GameCreator.Runtime.Stats
     {
         // MEMBERS: -------------------------------------------------------------------------------
 
-        [SerializeField] private Formula m_Formula;
+        [SerializeField] private PropertyGetFormula m_Formula = new PropertyGetFormula();
         [SerializeField] private PropertyGetGameObject m_Source = GetGameObjectSelf.Create();
         [SerializeField] private PropertyGetGameObject m_Target = GetGameObjectTarget.Create();
 
@@ -34,25 +34,19 @@ namespace GameCreator.Runtime.Stats
 
         // PROPERTIES: ----------------------------------------------------------------------------
 
-        protected override string Summary => string.Format(
-            "{0} {1}", 
-            this.m_Formula != null ? this.m_Formula.name : "(none)", 
-            this.m_CompareTo
-        );
+        protected override string Summary => $"{this.m_Formula} {this.m_CompareTo}";
 
         // RUN METHOD: ----------------------------------------------------------------------------
 
         protected override bool Run(Args args)
         {
-            if (this.m_Formula == null) return false;
+            Formula formula = this.m_Formula.Get(args);
+            if (formula == null) return false;
             
             GameObject source = this.m_Source.Get(args);
             GameObject target = this.m_Target.Get(args);
-
-            Traits traitsSource = source != null ? source.Get<Traits>() : null;
-            Traits traitsTarget = target != null ? target.Get<Traits>() : null;
-
-            double result = this.m_Formula.Calculate(traitsSource, traitsTarget);
+            
+            double result = formula.Calculate(source, target);
             return this.m_CompareTo.Match(result, args);
         }
     }

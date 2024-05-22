@@ -102,15 +102,17 @@ namespace GameCreator.Runtime.Quests
                 new InstructionQuestTaskValue(this, quest, taskId, task.ValueFrom)
             );
             
-            this.TriggersLut[taskId] = task.CreateCheckWhen(instructions);
+            int triggerId = HashCode.Combine(quest.Id.Hash, taskId);
+            this.TriggersLut[triggerId] = task.CreateCheckWhen(instructions);
         }
         
         internal void OnDisableTask(Quest quest, int taskId)
         {
             Task task = quest.GetTask(taskId);
             if (task is not { UseCounter: ProgressType.Property }) return;
-
-            if (this.TriggersLut.TryGetValue(taskId, out Trigger trigger) && trigger != null)
+            
+            int triggerId = HashCode.Combine(quest.Id.Hash, taskId);
+            if (this.TriggersLut.TryGetValue(triggerId, out Trigger trigger) && trigger != null)
             {
                 Destroy(trigger.gameObject);
             }

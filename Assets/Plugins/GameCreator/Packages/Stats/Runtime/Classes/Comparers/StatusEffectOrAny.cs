@@ -15,8 +15,11 @@ namespace GameCreator.Runtime.Stats
         
         // MEMBERS: -------------------------------------------------------------------------------
 
-        [SerializeField] private Option m_Option = Option.Any;
-        [SerializeField] private StatusEffect m_StatusEffect;
+        [SerializeField]
+        private Option m_Option = Option.Any;
+
+        [SerializeField]
+        private PropertyGetStatusEffect m_StatusEffect = new PropertyGetStatusEffect();
         
         // PROPERTIES: ----------------------------------------------------------------------------
 
@@ -30,17 +33,20 @@ namespace GameCreator.Runtime.Stats
         public StatusEffectOrAny(StatusEffect statusEffect) : this()
         {
             this.m_Option = Option.StatusEffect;
-            this.m_StatusEffect = statusEffect;
+            this.m_StatusEffect = new PropertyGetStatusEffect(
+                new GetStatusEffectInstance(statusEffect)
+            );
         }
         
         // PUBLIC METHODS: ------------------------------------------------------------------------
 
-        public bool Match(IdString statusEffectID)
+        public bool Match(IdString statusEffectID, Args args)
         {
             if (this.Any) return true;
+            StatusEffect statusEffect = this.m_StatusEffect.Get(args);
             
-            if (this.m_StatusEffect == null) return false;
-            return this.m_StatusEffect.ID.Hash == statusEffectID.Hash;
+            if (statusEffect == null) return false;
+            return statusEffect.ID.Hash == statusEffectID.Hash;
         }
     }
 }

@@ -10,17 +10,20 @@ namespace GameCreator.Runtime.Stats
     [Image(typeof(IconStatusEffect), ColorTheme.Type.Green)]
     [Description("Returns the name of a Status Effect")]
     
-    [Serializable] [HideLabelsInEditor]
+    [Serializable]
     public class GetStringStatusEffectName : PropertyTypeGetString
     {
-        [SerializeField] protected StatusEffect m_StatusEffect;
+        [SerializeField]
+        protected PropertyGetStatusEffect m_StatusEffect = new PropertyGetStatusEffect();
 
-        public override string Get(Args args) => this.m_StatusEffect != null 
-            ? this.m_StatusEffect.GetName(args) 
-            : string.Empty;
+        public override string Get(Args args)
+        {
+            StatusEffect statusEffect = this.m_StatusEffect.Get(args);
+            return statusEffect != null
+                ? statusEffect.GetName(args)
+                : string.Empty;
+        }
 
-        public override string String => this.m_StatusEffect != null 
-            ? this.m_StatusEffect.ID.String 
-            : "(none)";
+        public override string String => this.m_StatusEffect.ToString();
     }
 }

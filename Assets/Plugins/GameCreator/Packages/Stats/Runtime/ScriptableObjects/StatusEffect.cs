@@ -1,4 +1,4 @@
-using System;
+using System.Threading.Tasks;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -15,46 +15,62 @@ namespace GameCreator.Runtime.Stats
     
     public class StatusEffect : ScriptableObject
     {
+        #if UNITY_EDITOR
+
+        [UnityEditor.InitializeOnEnterPlayMode]
+        private static void OnEnterPlayMode()
+        {
+            LastAdded = null;
+            LastRemoved = null;
+        }
+        
+        #endif
+        
+        public static StatusEffect LastAdded { get; internal set; }
+        public static StatusEffect LastRemoved { get; internal set; }
+        
         // MEMBERS: -------------------------------------------------------------------------------
         
-        [SerializeField] private IdString m_ID = new IdString("status-effect-id");
         [SerializeField] private StatusEffectData m_Data = new StatusEffectData();
         [SerializeField] private StatusEffectInfo m_Info = new StatusEffectInfo();
 
-        [SerializeField] private StatusEffectInstruction m_OnStart = new StatusEffectInstruction(
+        [SerializeField] private RunInstructionsList m_OnStart = new RunInstructionsList(
             new InstructionCommonDebugComment("Executed right after this Status Effect is applied")
         );
         
-        [SerializeField] private StatusEffectInstruction m_OnEnd = new StatusEffectInstruction(
+        [SerializeField] private RunInstructionsList m_OnEnd = new RunInstructionsList(
             new InstructionCommonDebugComment("Executed right after this Status Effect finishes")
         );
         
-        [SerializeField] private StatusEffectInstruction m_WhileActive = new StatusEffectInstruction(
+        [SerializeField] private RunInstructionsList m_WhileActive = new RunInstructionsList(
             new InstructionCommonDebugComment("Executed over and over again while this Status Effect lasts")
         );
 
+        [SerializeField] private SaveUniqueID m_ID = new SaveUniqueID(false, "my-unique-id");
+
         // PROPERTIES: ----------------------------------------------------------------------------
 
-        public IdString ID => m_ID;
-
-        public Sprite Icon => this.m_Info.icon;
-        public Color Color => this.m_Info.color;
-
+        public IdString ID => this.m_ID.Get;
+        
+        public Color Color => this.m_Info.Color;
         public StatusEffectType Type => this.m_Data.Type;
-        public bool Save => this.m_Data.Save;
-        public bool HasDuration => this.m_Data.HasDuration;
 
-        public StatusEffectInstruction OnStart => this.m_OnStart;
-        public StatusEffectInstruction OnEnd => this.m_OnEnd;
-        public StatusEffectInstruction OnWhileActive => this.m_WhileActive;
+        public bool Save => this.m_ID.SaveValue;
+        public bool HasDuration => this.m_Data.HasDuration;
+        public bool IsHidden => this.m_Data.IsHidden;
 
         // PUBLIC METHODS: ------------------------------------------------------------------------
 
-        public string GetAcronym(Args args) => this.m_Info.acronym.Get(args);
-        public string GetName(Args args) => this.m_Info.name.Get(args);
-        public string GetDescription(Args args) => this.m_Info.description.Get(args);
+        public string GetAcronym(Args args) => this.m_Info.m_Acronym.Get(args);
+        public string GetName(Args args) => this.m_Info.m_Name.Get(args);
+        public string GetDescription(Args args) => this.m_Info.m_Description.Get(args);
+        public Sprite GetIcon(Args args) => this.m_Info.GetIcon(args);
 
         public float GetDuration(Args args) => (float) this.m_Data.GetDuration(args);
         public int GetMaxStack(Args args) => this.m_Data.GetMaxStack(args);
+
+        public Task RunOnStart(Args args, RunnerConfig config) => this.m_OnStart.Run(args, config);
+        public Task RunOnEnd(Args args, RunnerConfig config) => this.m_OnEnd.Run(args, config);
+        public Task RunWhileActive(Args args, RunnerConfig config) => this.m_WhileActive.Run(args, config);
     }
 }

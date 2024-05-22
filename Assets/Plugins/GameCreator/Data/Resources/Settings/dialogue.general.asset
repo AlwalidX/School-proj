@@ -9,15 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7206fa5b51374d4fa2a23838f33e4718, type: 3}
+  m_Script: {fileID: 11500000, guid: c0c9c208c3cd34d6f91c7c2c5d7892c2, type: 3}
   m_Name: dialogue.general
   m_EditorClassIdentifier: 
   m_Repository:
-    rid: 2980885344763248643
+    rid: 2980885344763248883
   references:
     version: 2
     RefIds:
-    - rid: 2980885344763248643
+    - rid: 2980885344763248883
       type: {class: DialogueRepository, ns: GameCreator.Runtime.Dialogue, asm: GameCreator.Runtime.Dialogue}
       data:
         m_Values:

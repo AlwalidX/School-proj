@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using GameCreator.Runtime.Characters;
 using GameCreator.Runtime.Common;
 using GameCreator.Runtime.VisualScripting;
 using UnityEngine;
@@ -25,18 +26,11 @@ namespace GameCreator.Runtime.Stats
     public class InstructionStatsChangeStat : Instruction
     {
         [SerializeField] private PropertyGetGameObject m_Target = GetGameObjectPlayer.Create();
-        
-        [SerializeField] private Stat m_Stat;
+
+        [SerializeField] private PropertyGetStat m_Stat = new PropertyGetStat();
         [SerializeField] private ChangeDecimal m_Change = new ChangeDecimal(100f);
         
-        public override string Title => string.Format(
-            "{0}[{1}] {2}",
-            this.m_Target,
-            this.m_Stat != null 
-                ? this.m_Stat.ID.String 
-                : string.Empty,
-            this.m_Change
-        );
+        public override string Title => $"{this.m_Target}[{this.m_Stat}] {this.m_Change}";
         
         protected override Task Run(Args args)
         {
@@ -45,12 +39,14 @@ namespace GameCreator.Runtime.Stats
 
             Traits traits = target.Get<Traits>();
             if (traits == null) return DefaultResult;
-            
-            if (this.m_Stat == null) return DefaultResult;
-            RuntimeStatData stat = traits.RuntimeStats.Get(this.m_Stat.ID);
-            if (stat == null) return DefaultResult;
 
-            stat.Base = (float) this.m_Change.Get(stat.Base, args);
+            Stat stat = this.m_Stat.Get(args);
+            if (stat == null) return DefaultResult;
+            
+            RuntimeStatData runtimeStat = traits.RuntimeStats.Get(stat.ID);
+            if (runtimeStat == null) return DefaultResult;
+
+            runtimeStat.Base = (float) this.m_Change.Get(runtimeStat.Base, args);
             return DefaultResult;
         }
     }

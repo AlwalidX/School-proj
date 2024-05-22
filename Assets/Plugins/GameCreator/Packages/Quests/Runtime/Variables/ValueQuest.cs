@@ -59,10 +59,11 @@ namespace GameCreator.Runtime.Quests
         
         // REGISTRATION METHODS: ------------------------------------------------------------------
 
-        [RuntimeInitializeOnLoadMethod]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void RuntimeInit() => RegisterValueType(
             TYPE_ID, 
-            new TypeData(typeof(ValueQuest), CreateValue)
+            new TypeData(typeof(ValueQuest), CreateValue), 
+            typeof(Quest)
         );
         
         #if UNITY_EDITOR
@@ -70,7 +71,8 @@ namespace GameCreator.Runtime.Quests
         [UnityEditor.InitializeOnLoadMethod]
         private static void EditorInit() => RegisterValueType(
             TYPE_ID, 
-            new TypeData(typeof(ValueQuest), CreateValue)
+            new TypeData(typeof(ValueQuest), CreateValue),
+            typeof(Quest)
         );
         
         #endif
